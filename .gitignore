@@ -1,3 +1,5 @@
 .vagrant
 *.-secret.yml
-applications/*.*-secret.*
+applications/monitoring/*.*-secret.*
+applications/pihole/*.*-secret.*
+*.log

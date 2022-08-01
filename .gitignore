@@ -1,3 +1,4 @@
 .vagrant
 applications/monitoring/grafana-secret.yml
 applications/pihole/pihole-secret.yml
+.github

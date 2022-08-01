@@ -1,1 +1,3 @@
 .vagrant
+*.-secret.yml
+applications/*.*-secret.*

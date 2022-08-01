@@ -1,0 +1,27 @@
+#---Persistent Volume Declaration ---#
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  namespace: pihole
+  name: wireguard-pv
+spec:
+  storageClassName: longhorn
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Mi
+---
+#---Persistent Volume Claim Declaration ---#
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  namespace: pihole
+  name: pvc-wireguard
+spec:
+  storageClassName: longhorn
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Mi

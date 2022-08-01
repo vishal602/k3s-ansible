@@ -1,0 +1,12 @@
+# Delete a namespace
+kubectl delete namespace {namespace}
+# Delete all resources in a name space
+kubectl delete all --all -n {namespace}
+# Create configmap from values file
+kubectl create configmap game-config-example --from-file=configmap-example/
+#command to output logs of the pod into a file
+kubectl describe -n adguard pod adguard-0 > /tmp/podlog.txt
+#exec into a pod
+kubectl exec -i -t -n adguard adguard-1 -c adguard -- sh -c "clear; (bash || ash || sh)"
+#copy local files to pod
+kubectl cp ./AdGuardHome.yaml adguard-0:/opt/adguardhome/conf/ -n adguard

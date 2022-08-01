@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole
+  namespace: pihole
+  labels:
+    app: pihole
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      containers:
+      - name: pihole
+        image: pihole/pihole:latest
+        imagePullPolicy: Always
+        ports:
+        - name: pi-admin
+          containerPort: 80
+          protocol: TCP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+        - containerPort: 53
+          name: dns-udp
+          protocol: UDP
+        env:
+        # - name: ServerIP
+        #   value: "192.168.147.219"
+        # - name: VIRTUAL_HOST
+        #   value: pi.hole
+        - name: TZ
+          value: "Pacific/Auckland"
+        - name: DNS1
+          value: "1.1.1.1"
+        - name: DNS2
+          value: "8.8.8.8"
+        - name: DNSMASQ_LISTENING
+          value: "all"
+        - name: WEBPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pihole-secret
+              key: password
+        volumeMounts:
+        #- name: pvc-17247bed-52c6-4a03-a33b-bdef253358d7
+        - name: pihole-data
+          mountPath: /etc/pihole
+        securityContext:
+          capabilities:        
+            add:
+              - NET_ADMIN  
+      volumes:
+      #- name: pvc-17247bed-52c6-4a03-a33b-bdef253358d7
+      - name: pihole-data    
+        persistentVolumeClaim:
+          claimName: pihole-data
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 2
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 2
+# #-----Cloudflare for DOH---------#
+#       - name: cloudflare-proxy-dns
+#         image: docker.io/cloudflare/cloudflared:2021.12.1
+#         args: 
+#         - "proxy-dns"
+#         - "--address"
+#         - "0.0.0.0"
+#         - "--port"
+#         - "5053"
+#         - "--metrics"
+#         - "0.0.0.0:8000"
+#         - "--max-upstream-conns"
+#         - "0"
+#         - "--upstream"
+#         - "https://1.1.1.1/dns-query"
+#         - "--upstream"
+#         - "https://1.0.0.1/dns-query"
+#         ports:
+#         - name: pihole-service-udp
+#           containerPort: 5053
+#           protocol: UDP
+#         - name: pihole-service-tcp
+#           containerPort: 5053
+#           protocol: TCP
+#         resources:
+#           limits:
+#             memory: "50Mi"
+#             cpu: "100m"
+#           requests:
+#             memory: "10Mi"
+#             cpu: "50m"

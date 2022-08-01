@@ -1,0 +1,78 @@
+#------Pihole-UI-SVC-Type-LB-Declartion---------#
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-ui-svc-lb
+  namespace: pihole
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "pihole"
+spec:
+  type: LoadBalancer
+  selector:
+    app: pihole
+  ports:
+    - protocol: TCP 
+      name: pihole-admin
+      port: 80
+      targetPort: 80
+  #loadBalancerIP: 192.168.147.218
+  externalTrafficPolicy: Local
+---
+#------Pihole-UDP53-SVC-Type-LB-Declartion---------#
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-udp-53-svc-lb
+  namespace: pihole
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "pihole"
+spec:
+  type: LoadBalancer
+  selector:
+    app: pihole
+  ports:
+    - protocol: UDP 
+      name: dns-udp
+      port: 53
+      targetPort: 53
+  #loadBalancerIP: 192.168.147.218
+  externalTrafficPolicy: Local
+---
+#------Pihole-TCP53-SVC-Type-Loadbalancer-Declartion---------#
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-tcp-53-svc-lb
+  namespace: pihole
+  annotations:
+    metallb.universe.tf/allow-shared-ip: "pihole"
+spec:
+  type: LoadBalancer
+  selector:
+    app: pihole
+  ports:
+    - protocol: TCP 
+      name: dns-tcp
+      port: 53
+      targetPort: 53
+  externalTrafficPolicy: Local
+  #loadBalancerIP: 192.168.147.218
+---
+#------Pihole-TCP53-SVC-Type-Cluster-Declartion---------#
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: pihole-tcp-53-svc-clust
+#   namespace: pihole
+#   annotations:
+#     metallb.universe.tf/allow-shared-ip: "pihole"
+# spec:
+#   type: ClusterIP
+#   clusterIP: 10.43.0.100
+#   selector:
+#     app: pihole
+#   ports:
+#     - protocol: TCP 
+#       name: dns-tcp-53-int
+#       port: 53
+#       targetPort: 53

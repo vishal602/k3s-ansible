@@ -1,0 +1,44 @@
+
+#Persistent Volume for Pihole
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pihole-pvc-data
+  namespace: pihole
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: longhorn
+  csi:
+    driver: driver.longhorn.io
+    fsType: ext4
+    volumeAttributes:
+      numberOfReplicas: '3'
+      staleReplicaTimeout: '2880'
+    volumeHandle: existing-longhorn-volume
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pihole-pvc-dnsmasq
+  namespace: pihole
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: longhorn
+  csi:
+    driver: driver.longhorn.io
+    fsType: ext4
+    volumeAttributes:
+      numberOfReplicas: '3'
+      staleReplicaTimeout: '2880'
+    volumeHandle: existing-longhorn-volume
+  

@@ -1,0 +1,216 @@
+---
+#==========Service Declaration UDP =====================#
+#Ref1: https://adguard-dns.io/kb/general/dns-providers/
+#Ref2: https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#upstreams-from-file
+#Ref3: https://github.com/belaytzev/HomeAdGuard
+#command: Create own password using docker --- docker run --rm httpd:2.4-alpine htpasswd -nbBC 10 "user" "password" | cut -d ":" -f 2
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-service-udp
+  namespace: adguard
+  annotations:
+    metallb.universe.tf/allow-shared-ip: adguard
+spec:
+  type: LoadBalancer
+  selector:
+    app: adguard
+  ports:
+  - port: 53
+    protocol: UDP
+    name: dns
+    targetPort: 53
+  - port: 67
+    protocol: UDP
+    name: dhcp1
+    targetPort: 67
+  - port: 68
+    protocol: UDP
+    name: dhcp2
+  - port: 443
+    protocol: UDP
+    name: https
+  - port: 784
+    protocol: UDP
+    name: dns-quic1
+  - port: 853
+    protocol: UDP
+    name: dns-tls
+  - port: 8853
+    protocol: UDP
+    name: dns-quic2
+  - port: 5443
+    protocol: UDP
+    name: dnscrypt
+  externalTrafficPolicy: Local
+---
+#==========Service Declaration TCP =====================#
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-service-tcp
+  namespace: adguard
+  annotations:
+    metallb.universe.tf/allow-shared-ip: adguard
+spec:
+  type: LoadBalancer
+  selector:
+    app: adguard
+  ports:
+  - port: 53
+    protocol: TCP
+    name: dns
+  - port: 68
+    protocol: TCP
+    name: dhcp1
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+  - port: 853
+    protocol: TCP
+    name: dns-tls
+  - port: 3000
+    protocol: TCP
+    name: dns-https
+    targetPort: 3000
+  - port: 5443
+    protocol: TCP
+    name: dnscrypt
+  externalTrafficPolicy: Local
+---
+#==========Statefulset Declaration=====================#
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: adguard
+  namespace: adguard
+  labels:
+    app: adguard
+spec:
+  replicas: 2
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: adguard
+  selector:
+    matchLabels:
+      app: adguard
+  template:
+    metadata:
+      labels:
+        app: adguard
+    spec:
+      terminationGracePeriodSeconds: 10
+      #=== InitContainer Declaration ===#
+      initContainers:
+      - name: busybox
+        image: busybox
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh","-c"]
+        args: ["cd /tmp && wget -O AdGuardHome.yaml https://raw.githubusercontent.com/vishal602/Config/main/AdGuardHome.yaml"]
+        volumeMounts:
+        - name: adguard-config
+          mountPath: /tmp
+          #subPath: AdGuardHome.yaml
+        securityContext:
+          runAsUser: 0
+      #=== AdGuard Container Declaration ===#
+      containers:
+      - name: adguard
+        image: adguard/adguardhome:latest
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          capabilities:        
+            add:
+              - NET_ADMIN
+          privileged: false
+          allowPrivilegeEscalation: false
+        #Note: Lifecycle copies the files after the pod is started. Do not use for bootstraping the config
+        # lifecycle:
+        #   postStart:
+        #     exec:
+        #       command: ["/bin/sh", "-c", "cp -rf /tmp/AdGuardHome.yaml /opt/adguardhome/conf/"]
+              # - /bin/sh
+              # - -c
+              # - "cd /opt/adguardhome/conf/"
+              # - "wget https://github.com/vishal602/Config/blob/main/AdGuardHome.yaml"
+        args: 
+        - "--verbose"
+        - "--config"
+        - "/opt/adguardhome/conf/AdGuardHome.yaml"
+        - "--work-dir"
+        - "/opt/adguardhome/work"
+        - "--no-check-update"
+
+        ports:
+        - containerPort: 53
+          protocol: TCP
+        - containerPort: 53
+          protocol: UDP
+        - containerPort: 67
+          protocol: UDP
+        - containerPort: 68
+          protocol: TCP
+        - containerPort: 68
+          protocol: UDP
+        - containerPort: 80
+          protocol: TCP
+        - containerPort: 443
+          protocol: TCP
+        - containerPort: 443
+          protocol: UDP
+        - containerPort: 3000
+          protocol: TCP
+        - containerPort: 853
+          protocol: TCP
+        - containerPort: 784
+          protocol: UDP
+        - containerPort: 853
+          protocol: UDP
+        - containerPort: 8853
+          protocol: UDP
+        - containerPort: 5443
+          protocol: TCP
+        - containerPort: 5443
+          protocol: UDP
+        # envFrom:
+        #   - configMapRef:
+        #       name: adguard-configmap    
+        # env:
+        # - name: bind_host
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: adguard-configmap
+        #       key: bind_host
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "200m"
+          limits:
+            memory: "256Mi"
+
+        volumeMounts:
+        - name: adguard-config
+          mountPath: /opt/adguardhome/conf
+        - name: adguard-data
+          mountPath: /opt/adguardhome/work
+
+  volumeClaimTemplates:
+  - metadata:
+      name: adguard-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 128Mi  
+  - metadata:
+      name: adguard-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 1Gi

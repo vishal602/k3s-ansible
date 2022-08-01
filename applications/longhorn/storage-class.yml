@@ -1,0 +1,17 @@
+#---- It is used to create your own storage class if you need in longhorn ---#
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: my-longhorn
+  namespace: longhorn-system
+provisioner: driver.longhorn.io
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+parameters:
+  numberOfReplicas: "3"
+  staleReplicaTimeout: "2880" # 48 hours in minutes
+  fromBackup: ""
+  fsType: "ext4"
+  nodeSelector: "storage"
+  dataLocality: "disabled"

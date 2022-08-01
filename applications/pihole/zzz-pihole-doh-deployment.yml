@@ -1,0 +1,95 @@
+#------------Deployment Declaration----------------#
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole
+  namespace: pihole
+  labels:
+    app: pihole
+spec:
+  replicas: 2
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      hostname: pihole-k3s
+      containers:
+      - name: pihole
+        image: pihole/pihole:latest
+        imagePullPolicy: Always
+        ports:
+        - name: pi-admin
+          containerPort: 80
+          protocol: TCP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+        - containerPort: 53
+          name: dns-udp
+          protocol: UDP
+        envFrom:
+          - configMapRef:
+              name: pihole-configmap     
+
+
+        env:
+        # - name: ServerIP
+        #   value: "192.168.147.219"
+        # - name: VIRTUAL_HOST
+        #   value: pi.hole
+        # - name: TZ
+        #   value: "Pacific/Auckland"
+        # - name: DNS1
+        #   value: "127.0.0.1#5053"
+        # - name: DNS2
+        #   value: "127.0.0.1#5053"
+        # - name: DNSMASQ_LISTENING
+        #   value: "all"
+        - name: WEBPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pihole-secret
+              key: password
+        volumeMounts:
+        - name: pihole-data
+          mountPath: /etc/pihole
+#------Cloudflare Container Params----------#
+#Ref: https://github.com/ivanmorenoj/k3s-pihole-wireguard/
+      - name: cloudflare-proxy-dns
+        image: docker.io/cloudflare/cloudflared:latest
+        args: 
+        - "proxy-dns"
+        - "--address"
+        - "0.0.0.0"
+        - "--port"
+        - "5053"
+        #- "--metrics"
+        #- "0.0.0.0:8000"
+        - "--max-upstream-conns"
+        - "0"
+        - "--upstream"
+        - "https://1.1.1.1/dns-query"
+        - "--upstream"
+        - "https://1.0.0.1/dns-query"
+        - "--upstream"
+        - "https://9.9.9.9/dns-query"
+        - "--upstream"
+        - "https://149.112.112.9/dns-query"
+        ports:
+        - name: svc-53-udp
+          containerPort: 5053
+          protocol: UDP
+        - name: svc-53-tcp
+          containerPort: 5053
+          protocol: TCP
+      volumes:
+        - name: pihole-data
+          persistentVolumeClaim:
+            claimName: pihole-data

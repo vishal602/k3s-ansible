@@ -1,0 +1,107 @@
+#--Reference URL: https://www.exoscale.com/syslog/longhorn-sks/
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: pihole
+  namespace: pihole
+  labels:
+    app: pihole
+spec:
+  replicas: 3
+  serviceName: pihole
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      containers:
+      - name: pihole
+        image: pihole/pihole:latest
+        imagePullPolicy: Always
+        ports:
+        - name: pi-admin
+          containerPort: 80
+          protocol: TCP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+        - containerPort: 53
+          name: dns-udp
+          protocol: UDP
+        envFrom:
+          - configMapRef:
+              name: pihole-configmap    
+        env:
+        - name: WEBPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pihole-secret
+              key: password
+        volumeMounts:
+        - name: pihole-data
+          mountPath: /etc/pihole
+        securityContext:
+          capabilities:        
+            add:
+              - NET_ADMIN  
+  volumeClaimTemplates:
+  - metadata:
+      name: pihole-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: longhorn
+      resources:
+        requests:
+          storage: 1Gi
+---
+#-----Cloudflare for DOH---------#
+#Ref: https://github.com/ivanmorenoj/k3s-pihole-wireguard/
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cloudflared
+  namespace: pihole
+  labels:
+    app: cloudflared
+spec:
+  replicas: 3
+  serviceName: cloudflared
+  selector:
+    matchLabels:
+      app: cloudflared
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+    spec:
+      containers:
+        - name: cloudflare-proxy-dns
+          image: docker.io/cloudflare/cloudflared:latest
+          args: 
+          - "proxy-dns"
+          - "--address"
+          - "0.0.0.0"
+          - "--port"
+          - "5053"
+          #- "--metrics"
+          #- "0.0.0.0:8000"
+          - "--max-upstream-conns"
+          - "0"
+          - "--upstream"
+          - "https://1.1.1.1/dns-query"
+          - "--upstream"
+          - "https://1.0.0.1/dns-query"
+          - "--upstream"
+          - "https://9.9.9.9/dns-query"
+          - "--upstream"
+          - "https://149.112.112.9/dns-query"
+          ports:
+          - name: svc-53-udp
+            containerPort: 5053
+            protocol: UDP
+          - name: svc-53-tcp
+            containerPort: 5053
+            protocol: TCP

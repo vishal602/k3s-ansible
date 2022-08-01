@@ -1,0 +1,76 @@
+#==========Service Declaration=====================#
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: adguard
+  name: adguard-service-udp
+spec:
+  type: LoadBalancer
+  selector:
+    app: adguard
+  ports:
+  - port: 53
+    protocol: UDP
+    name: dns
+    targetPort: 53
+  # - port: 67
+  #   protocol: UDP
+  #   name: dhcp1
+  #   targetPort: 67
+  # - port: 68
+  #   protocol: UDP
+  #   name: dhcp2
+  # - port: 443
+  #   protocol: UDP
+  #   name: https
+  # - port: 784
+  #   protocol: UDP
+  #   name: dns-quic1
+  # - port: 853
+  #   protocol: UDP
+  #   name: dns-tls
+  # - port: 8853
+  #   protocol: UDP
+  #   name: dns-quic2
+  # - port: 5443
+  #   protocol: UDP
+  #   name: dnscrypt
+  externalTrafficPolicy: Local
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: adguard
+  name: adguard-service-tcp
+  namespace: adguard
+spec:
+  type: LoadBalancer
+  selector:
+    app: adguard
+  ports:
+  # - port: 53
+  #   protocol: TCP
+  #   name: dns
+  # - port: 68
+  #   protocol: TCP
+  #   name: dhcp1
+  # - port: 80
+  #   protocol: TCP
+  #   name: http
+  # - port: 443
+  #   protocol: TCP
+  #   name: https
+  # - port: 853
+  #   protocol: TCP
+  #   name: dns-tls
+  - port: 3000
+    protocol: TCP
+    name: dns-https
+    targetPort: 3000
+  # - port: 5443
+  #   protocol: TCP
+  #   name: dnscrypt
+  externalTrafficPolicy: Local
+---

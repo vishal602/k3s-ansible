@@ -1,24 +1,24 @@
 #Ref URL: https://github.com/colliwhopper/kubernetes-traefik-ingress-controller/blob/main/traefik-pv-and-claim.yaml
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: traefik-pv
-spec:
-  capacity:
-    storage: 2Gi
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
-  storageClassName: longhorn
-  csi:
-    driver: driver.longhorn.io
-    fsType: ext4
-    volumeAttributes:
-      numberOfReplicas: '2'
-      staleReplicaTimeout: '2880'
-    volumeHandle: traefik-volume
+
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: traefik-pv
+# spec:
+#   capacity:
+#     storage: 2Gi
+#   volumeMode: Filesystem
+#   accessModes:
+#     - ReadWriteOnce
+#   persistentVolumeReclaimPolicy: Delete
+#   storageClassName: longhorn
+#   csi:
+#     driver: driver.longhorn.io
+#     fsType: ext4
+#     volumeAttributes:
+#       numberOfReplicas: '2'
+#       staleReplicaTimeout: '2880'
+#     volumeHandle: traefik-volume
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

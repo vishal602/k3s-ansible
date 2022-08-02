@@ -1,9 +1,18 @@
 ---
-#==========Service Declaration UDP =====================#
 #Ref1: https://adguard-dns.io/kb/general/dns-providers/
 #Ref2: https://github.com/AdguardTeam/AdGuardHome/wiki/Configuration#upstreams-from-file
 #Ref3: https://github.com/belaytzev/HomeAdGuard
 #command: Create own password using docker --- docker run --rm httpd:2.4-alpine htpasswd -nbBC 10 "user" "password" | cut -d ":" -f 2
+#==========ConfigMap declaration =====================#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: adguard-configmap
+  namespace: adguard
+data:
+  TZ: "Pacific/Auckland"
+---
+#==========Service Declaration UDP =====================#
 apiVersion: v1
 kind: Service
 metadata:
@@ -178,12 +187,12 @@ spec:
         # envFrom:
         #   - configMapRef:
         #       name: adguard-configmap    
-        # env:
-        # - name: bind_host
-        #   valueFrom:
-        #     configMapKeyRef:
-        #       name: adguard-configmap
-        #       key: bind_host
+        env:
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+              name: adguard-configmap
+              key: TZ
         resources:
           requests:
             memory: "128Mi"

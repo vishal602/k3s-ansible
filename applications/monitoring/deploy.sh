@@ -5,7 +5,7 @@ set -x
 # kubectl create namespace monitoring
 # sleep 3
 
-# kubectl apply -f grafana-secret.yml
+# kubectl apply -f grafana-secret.yaml
 # sleep 3
 
 helm install -n monitoring prometheus prometheus-community/kube-prometheus-stack -f values.yaml
@@ -17,4 +17,4 @@ helm install -n monitoring prometheus prometheus-community/kube-prometheus-stack
 #kubectl --namespace monitoring get pods -l "release=prometheus"
 
 #upgrade the stack
-#helm upgrade -n monitoring prometheus prometheus-community/kube-prometheus-stack -f values.yaml
+#helm upgrade -n monitoring prometheus prometheus-community/kube-prometheus-stack --values ./values.yaml

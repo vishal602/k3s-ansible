@@ -2,7 +2,7 @@
 - name: Set same timezone on every Server
   timezone:
     name: "{{ system_timezone }}"
-  when: (system_timezone is defined) and (system_timezone != "Your/Timezone")
+  when: (system_timezone is defined) and (system_timezone != "Pacific/Auckland")
 
 - name: Set SELinux to disabled state
   selinux:

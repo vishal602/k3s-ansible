@@ -28,8 +28,8 @@ on processor architecture:
 
 ## ✅ System requirements
 
-* Deployment environment must have Ansible 2.4.0+.  If you need a quick primer on Ansible [you can check out my docs and setting up Ansible](https://docs.technotim.live/posts/ansible-automation/).
-* `server` and `agent` nodes should have passwordless SSH access, if not you can supply arguments to provide credentials `-ask-pass --ask-become-pass` to ach command.
+- Deployment environment must have Ansible 2.4.0+.  If you need a quick primer on Ansible [you can check out my docs and setting up Ansible](https://docs.technotim.live/posts/ansible-automation/).
+- `server` and `agent` nodes should have passwordless SSH access, if not you can supply arguments to provide credentials `--ask-pass --ask-become-pass` to each command.
 
 ## 🚀 Getting Started
 
@@ -41,7 +41,7 @@ First create a new directory based on the `sample` directory within the `invento
 cp -R inventory/sample inventory/my-cluster
 ```
 
-Second, edit `inventory/my-cluster/hosts.ini` to match the system information gathered above. 
+Second, edit `inventory/my-cluster/hosts.ini` to match the system information gathered above
 
 For example:
 
@@ -96,6 +96,10 @@ scp debian@master_ip:~/.kube/config ~/.kube/config
 
 See the commands [here](https://docs.technotim.live/posts/k3s-etcd-ansible/#testing-your-cluster).
 
+### Troubleshooting
+
+Be sure to see [this post](https://github.com/techno-tim/k3s-ansible/discussions/20) on how to troubleshoot common problems
+
 ### 🔷 Vagrant
 
 You may want to kickstart your k3s cluster by using Vagrant to quickly build you all needed VMs with one command.
@@ -109,6 +113,6 @@ This repo is really standing on the shoulders of giants.  To all those who have 
 
 Thanks to these repos for code and ideas:
 
-* [k3s-io/k3s-ansible](https://github.com/k3s-io/k3s-ansible)
-* [geerlingguy/turing-pi-cluster](https://github.com/geerlingguy/turing-pi-cluster)
-* [212850a/k3s-ansible](https://github.com/212850a/k3s-ansible) 
+- [k3s-io/k3s-ansible](https://github.com/k3s-io/k3s-ansible)
+- [geerlingguy/turing-pi-cluster](https://github.com/geerlingguy/turing-pi-cluster)
+- [212850a/k3s-ansible](https://github.com/212850a/k3s-ansible)

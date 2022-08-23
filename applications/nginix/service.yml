@@ -4,6 +4,8 @@ kind: Service
 metadata:
   name: nginx
   namespace: traefik
+  # annotations:
+  #   metallb.universe.tf/allow-shared-ip: "nginx"
   # labels:
   #   app.kubernetes.io/instance: authentik-embedded-outpost
   #   app.kubernetes.io/managed-by: goauthentik.io
@@ -18,3 +20,4 @@ spec:
     port: 80
     targetPort: 80
   #type: LoadBalancer
+  #externalTrafficPolicy: Local

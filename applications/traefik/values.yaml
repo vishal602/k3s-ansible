@@ -1,0 +1,106 @@
+# -- Reference: https://github.com/techno-tim/launchpad/blob/master/kubernetes/traefik-cert-manager/traefik/values.yaml
+image:
+  name: traefik
+  # defaults to appVersion
+  tag: ""
+  pullPolicy: IfNotPresent
+  
+globalArguments:
+  - "--global.sendanonymoususage=false"
+  - "--global.checknewversion=false"
+
+additionalArguments:
+  - "--serversTransport.insecureSkipVerify=true"
+  - "--log.level=INFO"
+
+deployment:
+  enabled: true
+  replicas: 3
+  annotations: {}
+  podAnnotations: {}
+  additionalContainers: []
+  initContainers: []
+
+ports:
+  web:
+    redirectTo: websecure
+  websecure:
+    tls:
+      enabled: true
+      
+ingressRoute:
+  dashboard:
+    enabled: false
+
+providers:
+  kubernetesCRD:
+    enabled: true
+    ingressClass: traefik-external
+  kubernetesIngress:
+    enabled: true
+    publishedService:
+      enabled: false
+
+rbac:
+  enabled: true
+
+service:
+  enabled: true
+  type: LoadBalancer
+  annotations: {}
+  labels: {}
+  spec:
+    loadBalancerIP: 192.168.147.213 # this should be an IP in the MetalLB range
+  loadBalancerSourceRanges: []
+  externalIPs: []
+
+#----------- Additional Configurations ----------------#
+#-----Storage-----#
+# persistence:
+#   enabled: true
+#   name: data
+#   existingClaim: traefik-ssl-store
+#   accessMode: ReadWriteOnce
+#   size: 128Mi
+#   storageClass: longhorn
+#   path: /certs
+#   annotations: {}
+
+#-----Updates-----#
+rollingUpdate:
+  maxUnavailable: 1
+  maxSurge: 1
+
+# Customize liveness and readiness probe values.
+# readinessProbe:
+#   failureThreshold: 1
+#   initialDelaySeconds: 10
+#   periodSeconds: 10
+#   successThreshold: 1
+#   timeoutSeconds: 2
+
+# livenessProbe:
+#   failureThreshold: 3
+#   initialDelaySeconds: 10
+#   periodSeconds: 10
+#   successThreshold: 1
+#   timeoutSeconds: 2
+
+#-----Logs-----#
+logs:
+  general:
+      level: ERROR
+  access:
+    # To enable access logs
+    enabled: false
+    filters: {}
+
+#-----Metrics-----#
+metrics:
+  # datadog:
+  #   address: 127.0.0.1:8125
+  # influxdb:
+  #   address: localhost:8089
+  #   protocol: udp
+  prometheus:
+    entryPoint: metrics

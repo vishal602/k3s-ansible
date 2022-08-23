@@ -1,0 +1,12 @@
+# URL Reference: https://blog.nobugware.com/post/enabling-cloudflare-in-front-of-your-kubernetes-cluster-with-traefik/
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: TLSStore
+metadata:
+  name: default
+  namespace: kube-system
+  #namespace: traefik
+
+spec:
+  defaultCertificate:
+    secretName: default-certificate

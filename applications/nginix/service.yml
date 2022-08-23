@@ -4,6 +4,12 @@ kind: Service
 metadata:
   name: nginx
   namespace: traefik
+  # labels:
+  #   app.kubernetes.io/instance: authentik-embedded-outpost
+  #   app.kubernetes.io/managed-by: goauthentik.io
+  #   app.kubernetes.io/name: authentik-proxy
+  #   goauthentik.io/outpost-name: authentik-embedded-outpost
+  #   goauthentik.io/outpost-type: proxy
 spec:
   selector:
     app: nginx

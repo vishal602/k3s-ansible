@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: traefik-authentik-ingress
+  namespace: traefik
+spec:
+  tls:
+    - {}
+  rules:
+    - host: traefik.pradax.tk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: authentik
+                port:
+                  name: http

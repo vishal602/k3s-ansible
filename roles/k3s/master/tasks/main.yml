@@ -184,7 +184,6 @@
     file_type: directory
   register: k3s_server_manifests_directories
 
-
 - name: Remove manifests and folders that are only needed for bootstrapping cluster so k3s doesn't auto apply on start
   file:
     path: "{{ item.path }}"

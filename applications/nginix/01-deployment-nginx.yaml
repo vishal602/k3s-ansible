@@ -1,9 +1,17 @@
 ---
+# Create Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx
+  labels:
+    name: nginx
+---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: nginx
-  namespace: traefik
+  namespace: nginx
   labels:
     app: nginx
 spec:

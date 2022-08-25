@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nginx
-  namespace: traefik
+  namespace: nginx
   # annotations:
   #   metallb.universe.tf/allow-shared-ip: "nginx"
   # labels:

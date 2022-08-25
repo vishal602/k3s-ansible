@@ -3,7 +3,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: nginx
-  namespace: traefik
+  namespace: nginx
   annotations: 
     kubernetes.io/ingress.class: traefik-external
 spec:
@@ -18,7 +18,7 @@ spec:
           port: 80
       middlewares:
         - name: authentik
-          namespace: traefik
+          namespace: default
     # - kind: Rule
     #   match: "Host(`nginx.pradax.tk`) && PathPrefix(`/outpost.goauthentik.io/`)"
     #   priority: 15

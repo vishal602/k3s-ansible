@@ -17,7 +17,7 @@ spec:
       middlewares:
         - name: authentik
         #- name: traefik-dashboard-basicauth
-          namespace: traefik
+          namespace: default
       priority: 10
       services:
         - kind: TraefikService

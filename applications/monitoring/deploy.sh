@@ -8,7 +8,7 @@ set -x
 # kubectl apply -f grafana-secret.yaml
 # sleep 3
 
-helm install -n monitoring prometheus prometheus-community/kube-prometheus-stack -f values.yaml
+helm install -n monitoring prometheus prometheus-community/kube-prometheus-stack -f values.yaml --create-namespace monitoring
 
 #uninstalling helm chart
 #helm uninstall -n monitoring prometheus

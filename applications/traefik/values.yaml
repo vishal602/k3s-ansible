@@ -36,6 +36,10 @@ providers:
   kubernetesCRD:
     enabled: true
     ingressClass: traefik-external
+    # If allowCrossNamespace parameter is set to true, IngressRoutes are able to reference resources in other namespaces than theirs
+    allowCrossNamespace: true
+    # If allowExternalNameService parameter is set to true, IngressRoutes are able to reference ExternalName services.
+    allowExternalNameServices: true
   kubernetesIngress:
     enabled: true
     publishedService:

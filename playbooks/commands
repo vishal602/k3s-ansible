@@ -1,3 +1,0 @@
-#eReboot:
-
-ansible-playbook ./playbooks/reboot.yml -i ./inventory/my-cluster/hosts.ini --ask-pass --ask-become

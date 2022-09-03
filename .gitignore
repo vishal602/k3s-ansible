@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .vagrant
 #applications/monitoring/grafana-secret.yaml
 #applications/pihole/pihole-secret.yml
@@ -16,3 +17,6 @@ applications/traefik/manifest
 *authentik
 *certificates
 *.yamllint
+=======
+.env/
+>>>>>>> a6b2a95b7e4276517c40796af2e995fc86377582

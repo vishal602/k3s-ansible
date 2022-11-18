@@ -54,11 +54,8 @@
   file:
     path: /tmp/k3s
     state: absent
-<<<<<<< HEAD
 
 - name: Reboot and wait for node to come back up
   reboot:
     reboot_timeout: 3600
     
-=======
->>>>>>> 17a74b66c812ce20cb5b2047b07c33cc3961f0d4

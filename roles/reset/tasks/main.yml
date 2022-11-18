@@ -44,22 +44,21 @@
     - /var/lib/kubelet
     - /var/lib/rancher/k3s
     - /var/lib/rancher/
-    - /usr/local/bin/k3s
     - /var/lib/cni/
 
 - name: Reload daemon_reload
   systemd:
     daemon_reload: yes
 
-- name: Remove linux-modules-extra-raspi
-  apt: name=linux-modules-extra-raspi state=absent
-
-- name: Remove tmp director used for manifests
+- name: Remove tmp directory used for manifests
   file:
     path: /tmp/k3s
     state: absent
+<<<<<<< HEAD
 
 - name: Reboot and wait for node to come back up
   reboot:
     reboot_timeout: 3600
     
+=======
+>>>>>>> 17a74b66c812ce20cb5b2047b07c33cc3961f0d4

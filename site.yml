@@ -22,7 +22,4 @@
   become: yes
   roles:
     - role: k3s/post
-<<<<<<< HEAD
-    
-=======
->>>>>>> 229695989428903c0cc150fafc810f87439d7b22
+        

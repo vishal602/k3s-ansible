@@ -14,3 +14,5 @@ kubectl cp ./AdGuardHome.yaml adguard-0:/opt/adguardhome/conf/ -n adguard
 kubectl patch storageclass local-path -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
 #find Storage class
 kubectl get storageclass
+#Check Cluster Status
+kubectl cluster-info

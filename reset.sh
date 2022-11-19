@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ansible-playbook reset.yml -i inventory/my-cluster/hosts.ini --ask-pass
+ansible-playbook reset.yml -i inventory/my-cluster/hosts.ini --ask-pass --ask-become

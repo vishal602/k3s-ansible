@@ -19,8 +19,4 @@ applications/traefik/manifest
 *.yamllint
 =======
 .env/
-<<<<<<< HEAD
->>>>>>> a6b2a95b7e4276517c40796af2e995fc86377582
-=======
 *.log
->>>>>>> 17a74b66c812ce20cb5b2047b07c33cc3961f0d4
